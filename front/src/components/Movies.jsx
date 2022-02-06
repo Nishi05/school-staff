@@ -1,31 +1,31 @@
-import React, {Component, Fragment} from "react";
-import {Link} from 'react-router-dom';
+import React, { Component, Fragment } from 'react'
+import { Link } from 'react-router-dom'
 
 export default class Movies extends Component {
+  state = {
+    movies: [],
+    isLoaded: false,
+  }
 
-    state = { movies: []};
-
-    componentDidMount () {
-        this.setState({
-            movies: [
-                {id: 1, title: "The Shawshank Redemption", runtime: 142},
-                {id: 2, title: "The Godfather", runtime: 142},
-                {id: 3, title: "The Dark Knight", runtime: 153},
-            ]
-        })
-    }
-    render() {
-        return (
-            <Fragment>
-                <h2>Choose a movie</h2>
-                <ul>
-                    {this.state.movies.map((m) => (
-                        <li key={m.id}> 
-                            <Link to={`/movies/${m.id}`}>{m.title}</Link>
-                        </li>
-                    ))}
-                </ul>
-            </Fragment>
-        );
-    }
+  componentDidMount() {
+    fetch('http://localhost:4000/v1/movies')
+      .then((response) => response.json())
+      .then((json) => {
+        this.setState({})
+      })
+  }
+  render() {
+    return (
+      <Fragment>
+        <h2>Choose a movie</h2>
+        <ul>
+          {this.state.movies.map((m) => (
+            <li key={m.id}>
+              <Link to={`/movies/${m.id}`}>{m.title}</Link>
+            </li>
+          ))}
+        </ul>
+      </Fragment>
+    )
+  }
 }
