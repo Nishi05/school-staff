@@ -21,15 +21,16 @@ func (app *application) enableCORS(next http.Handler) http.Handler {
 
 func (app *application) checkToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Vary", "Authorization")
+		w.Header().Add("Vary", "Authorization")
 
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-
+			// could set an anonymous user
 		}
 
 		headerParts := strings.Split(authHeader, " ")
 		if len(headerParts) != 2 {
+			log.Panicln(authHeader)
 			app.errorJSON(w, errors.New("invalid auth header"))
 			return
 		}
@@ -56,7 +57,7 @@ func (app *application) checkToken(next http.Handler) http.Handler {
 			return
 		}
 
-		if claims.Issuer != "madomain.com" {
+		if claims.Issuer != "mydomain.com" {
 			app.errorJSON(w, errors.New("unauthorized - invalid issuer"))
 			return
 		}
