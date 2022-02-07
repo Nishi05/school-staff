@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -154,10 +155,33 @@ func (m *DBModel) GenreAll() ([]*Genre, error) {
 			&genre.CreatedAt,
 			&genre.UpdatedAt,
 		)
-		if err != nil{
+		if err != nil {
 			return nil, err
 		}
 		genres = append(genres, &genre)
 	}
 	return genres, nil
+}
+
+func (m *DBModel) InsertMovie(movie Movie) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	stmt := `insert into movies (title, description, year, release_date, runtime, rating, mpaa_rating, 
+		created_at, updated_at) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+	_, err := m.DB.ExecContext(ctx, stmt,
+		movie.Title,
+		movie.Description,
+		movie.Year,
+		movie.ReleaseDate,
+		movie.Runtime,
+		movie.Rating,
+		movie.MPAARating,
+		movie.CreatedAt,
+		movie.UpdatedAt,
+	)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
 }
