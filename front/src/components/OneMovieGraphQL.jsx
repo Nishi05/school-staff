@@ -1,34 +1,39 @@
 import React, { Component, Fragment } from 'react'
 
-export default class OneMovie extends Component {
+export default class OneMovieGraphQL extends Component {
   state = { movie: {}, isLoaded: false, error: null }
 
   componentDidMount() {
-    fetch(
-      `${process.env.REACT_APP_API_URL}/v1/movie/` + this.props.match.params.id
-    )
-      .then((response) => {
-        console.log('Status code is', response.status)
-        if (response.status !== '200') {
-          let err = Error
-          err.message = 'Invalid response code' + response.status
-          this.setState({ error: err })
+    const payload = `
+    {
+        movie(id: ${this.props.match.params.id}) {
+            id
+            title
+            runtime
+            year
+            description
+            release_date
+            rating
+            mpaa_rating
         }
-        return response.json()
-      })
-      .then((json) => {
-        this.setState(
-          {
-            movie: json.movie,
-            isLoaded: true,
-          },
-          (error) => {
-            this.setState({
-              isLoaded: true,
-              error,
-            })
-          }
-        )
+    }
+    `
+
+    const myHeaders = new Headers()
+    myHeaders.append('Content-Type', 'application/json')
+    const requestOptions = {
+      method: 'POST',
+      body: payload,
+      headers: myHeaders,
+    }
+
+    fetch(`${process.env.REACT_APP_API_URL}/v1/graphql`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        this.setState({
+          movie: data.data.movie,
+          isLoaded: true,
+        })
       })
   }
   render() {
