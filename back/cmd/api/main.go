@@ -9,8 +9,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -40,14 +42,19 @@ type application struct {
 }
 
 func main() {
-	var cfg config
-	flag.IntVar(&cfg.port, "port", 4000, "Server port to listen")
-	flag.StringVar(&cfg.env, "env", "development", "Application environment (development|production)")
-	flag.StringVar(&cfg.db.dsn, "dsn", "postgres://kokinishimaki@localhost/go_movies?sslmode=disable", "Postgres connection string")
-	flag.StringVar(&cfg.jwt.secret, "jwt-secret", "2dce505d96a53c5768052ee90f3df2055657518dad489160df9913f66042e160", "secret")
-	flag.Parse()
-
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+
+	err := godotenv.Load()
+	if err != nil {
+		panic("Error loading .env file")
+	}
+	port, _ := strconv.Atoi(os.Getenv("PORT"))
+	var cfg config
+	flag.IntVar(&cfg.port, "port", port, "Server port to listen")
+	flag.StringVar(&cfg.env, "env", "development", "Application environment (development|production)")
+	flag.StringVar(&cfg.db.dsn, "dsn", os.Getenv("DATABASE_URL"), "Postgres connection string")
+	flag.StringVar(&cfg.jwt.secret, "jwt-secret", os.Getenv("JWT_SECRET"), "secret")
+	flag.Parse()
 
 	db, err := openDB(cfg)
 
