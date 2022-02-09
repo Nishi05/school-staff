@@ -42,14 +42,12 @@ type application struct {
 
 func main() {
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-
 	err := godotenv.Load()
 	if err != nil {
-		logger.Fatal(err)
 	}
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "4000" // Default port if not specified
+		port = "4000"
 	}
 	var cfg config
 	flag.StringVar(&cfg.port, "port", port, "Server port to listen")
