@@ -51,7 +51,7 @@ export default class App extends Component {
         <div className="container">
           <div className="row">
             <div className="col mt-3">
-              <h1 className="mt-3">Go Watch a Movie!</h1>
+              <h1 className="mt-3">スクスタ</h1>
             </div>
             <div className="col mt-3 text-end">{loginLink}</div>
             <hr className="mb-3"></hr>
