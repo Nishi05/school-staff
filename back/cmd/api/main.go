@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -19,7 +18,7 @@ import (
 const version = "1.0.0"
 
 type config struct {
-	port int
+	port string
 	env  string
 	db   struct {
 		dsn string
@@ -48,9 +47,12 @@ func main() {
 	if err != nil {
 		panic("Error loading .env file")
 	}
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "4000" // Default port if not specified
+	}
 	var cfg config
-	flag.IntVar(&cfg.port, "port", port, "Server port to listen")
+	flag.StringVar(&cfg.port, "port", port, "Server port to listen")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment (development|production)")
 	flag.StringVar(&cfg.db.dsn, "dsn", os.Getenv("DATABASE_URL"), "Postgres connection string")
 	flag.StringVar(&cfg.jwt.secret, "jwt-secret", os.Getenv("JWT_SECRET"), "secret")
@@ -69,7 +71,7 @@ func main() {
 		models: models.NewModels(db),
 	}
 	srv := &http.Server{
-		Addr:        fmt.Sprintf(":%d", cfg.port),
+		Addr:        fmt.Sprintf(":%v", cfg.port),
 		Handler:     app.routes(),
 		IdleTimeout: time.Minute,
 		ReadTimeout: 10 * time.Second,
