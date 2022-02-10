@@ -13,13 +13,13 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-var movies []*models.Movie
+var schools []*models.School
 
 // graphql schema definition
 var fields = graphql.Fields{
-	"movie": &graphql.Field{
-		Type:        movieType,
-		Description: "Get movie by id",
+	"school": &graphql.Field{
+		Type:        schoolType,
+		Description: "Get school by id",
 		Args: graphql.FieldConfigArgument{
 			"id": &graphql.ArgumentConfig{
 				Type: graphql.Int,
@@ -28,9 +28,9 @@ var fields = graphql.Fields{
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			id, ok := p.Args["id"].(int)
 			if ok {
-				for _, movie := range movies {
-					if movie.ID == id {
-						return movie, nil
+				for _, school := range schools {
+					if school.ID == id {
+						return school, nil
 					}
 				}
 			}
@@ -38,28 +38,28 @@ var fields = graphql.Fields{
 		},
 	},
 	"list": &graphql.Field{
-		Type:        graphql.NewList(movieType),
-		Description: "Get all movies",
+		Type:        graphql.NewList(schoolType),
+		Description: "Get all schools",
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-			return movies, nil
+			return schools, nil
 		},
 	},
 	"search": &graphql.Field{
-		Type:        graphql.NewList(movieType),
-		Description: "Search movies by title",
+		Type:        graphql.NewList(schoolType),
+		Description: "Search schools by title",
 		Args: graphql.FieldConfigArgument{
-			"titleContains": &graphql.ArgumentConfig{
+			"nameContains": &graphql.ArgumentConfig{
 				Type: graphql.String,
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-			var theList []*models.Movie
-			search, ok := p.Args["titleContains"].(string)
+			var theList []*models.School
+			search, ok := p.Args["nameContains"].(string)
 			if ok {
-				for _, currentMovie := range movies {
-					if strings.Contains(strings.ToLower(currentMovie.Title), search) {
+				for _, currentSchool := range schools {
+					if strings.Contains(strings.ToLower(currentSchool.Name), search) {
 						log.Println("Found one")
-						theList = append(theList, currentMovie)
+						theList = append(theList, currentSchool)
 					}
 				}
 			}
@@ -68,32 +68,23 @@ var fields = graphql.Fields{
 	},
 }
 
-var movieType = graphql.NewObject(
+var schoolType = graphql.NewObject(
 	graphql.ObjectConfig{
-		Name: "Movie",
+		Name: "School",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
 				Type: graphql.Int,
 			},
-			"title": &graphql.Field{
+			"name": &graphql.Field{
+				Type: graphql.String,
+			},
+			"recruit_type": &graphql.Field{
+				Type: graphql.String,
+			},
+			"salary": &graphql.Field{
 				Type: graphql.String,
 			},
 			"description": &graphql.Field{
-				Type: graphql.String,
-			},
-			"year": &graphql.Field{
-				Type: graphql.Int,
-			},
-			"release_date": &graphql.Field{
-				Type: graphql.DateTime,
-			},
-			"runtime": &graphql.Field{
-				Type: graphql.Int,
-			},
-			"rating": &graphql.Field{
-				Type: graphql.Int,
-			},
-			"mpaa_rating": &graphql.Field{
 				Type: graphql.String,
 			},
 			"created_at": &graphql.Field{
@@ -106,8 +97,8 @@ var movieType = graphql.NewObject(
 	},
 )
 
-func (app *application) moviesGraphQL(w http.ResponseWriter, r *http.Request) {
-	movies, _ = app.models.DB.All()
+func (app *application) schoolsGraphQL(w http.ResponseWriter, r *http.Request) {
+	schools, _ = app.models.DB.All()
 	q, _ := io.ReadAll(r.Body)
 	query := string(q)
 

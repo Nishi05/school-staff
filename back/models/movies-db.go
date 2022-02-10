@@ -12,48 +12,45 @@ type DBModel struct {
 	DB *sql.DB
 }
 
-func (m *DBModel) Get(id int) (*Movie, error) {
+func (m *DBModel) Get(id int) (*School, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := `select id, title, description, year, release_date, rating, runtime, mpaa_rating,
-				created_at, updated_at from movies where id = $1`
+	query := `select id, name, recruit_type, salary, description,
+				created_at, updated_at from schools where id = $1`
 	row := m.DB.QueryRowContext(ctx, query, id)
 
-	var movie Movie
+	var school School
 
 	err := row.Scan(
-		&movie.ID,
-		&movie.Title,
-		&movie.Description,
-		&movie.Year,
-		&movie.ReleaseDate,
-		&movie.Rating,
-		&movie.Runtime,
-		&movie.MPAARating,
-		&movie.CreatedAt,
-		&movie.UpdatedAt,
+		&school.ID,
+		&school.Name,
+		&school.Recruit_type,
+		&school.Salary,
+		&school.Description,
+		&school.CreatedAt,
+		&school.UpdatedAt,
 	)
 	if err != nil {
 		return nil, err
 	}
 	query = `select 
-				mg.id, mg.movie_id, mg.genre_id, g.genre_name
+				mg.id, mg.school_id, mg.genre_id, g.genre_name
 			from
-				movies_genres mg
+				schools_genres mg
 				left join genres g on (g.id = mg.genre_id)
 			where
-				mg.movie_id = $1
+				mg.school_id = $1
 	`
 	rows, _ := m.DB.QueryContext(ctx, query, id)
 	defer rows.Close()
 
 	genres := make(map[int]string)
 	for rows.Next() {
-		var mg MovieGenre
+		var mg SchoolGenre
 		err := rows.Scan(
 			&mg.ID,
-			&mg.MovieID,
+			&mg.SchoolID,
 			&mg.GenreID,
 			&mg.Genre.GenreName,
 		)
@@ -63,62 +60,59 @@ func (m *DBModel) Get(id int) (*Movie, error) {
 		genres[mg.ID] = mg.Genre.GenreName
 	}
 
-	movie.MovieGenre = genres
+	school.SchoolGenre = genres
 
-	return &movie, nil
+	return &school, nil
 }
 
-func (m *DBModel) All(genre ...int) ([]*Movie, error) {
+func (m *DBModel) All(genre ...int) ([]*School, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	where := ""
 	if len(genre) > 0 {
-		where = fmt.Sprintf("where id in (select movie_id from movies_genres where genre_id = %d )", genre[0])
+		where = fmt.Sprintf("where id in (select school_id from schools_genres where genre_id = %d )", genre[0])
 	}
-	query := fmt.Sprintf(`select id, title, description, year, release_date, rating, runtime, mpaa_rating,
-				created_at, updated_at from movies %s order by title`, where)
+	query := fmt.Sprintf(`select id, name, recruit_type, salary, description,
+				created_at, updated_at from schools %s order by name`, where)
 
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
-	var movies []*Movie
+	var schools []*School
 
 	for rows.Next() {
-		var movie Movie
+		var school School
 		err := rows.Scan(
-			&movie.ID,
-			&movie.Title,
-			&movie.Description,
-			&movie.Year,
-			&movie.ReleaseDate,
-			&movie.Rating,
-			&movie.Runtime,
-			&movie.MPAARating,
-			&movie.CreatedAt,
-			&movie.UpdatedAt,
+			&school.ID,
+			&school.Name,
+			&school.Recruit_type,
+			&school.Salary,
+			&school.Description,
+			&school.CreatedAt,
+			&school.UpdatedAt,
 		)
 		if err != nil {
 			return nil, err
 		}
 
 		genreQuery := `select 
-				mg.id, mg.movie_id, mg.genre_id, g.genre_name
+				mg.id, mg.school_id, mg.genre_id, g.genre_name
 			from
-				movies_genres mg
+				schools_genres mg
 				left join genres g on (g.id = mg.genre_id)
 			where
-				mg.movie_id = $1
+				mg.school_id = $1
 	`
-		genreRows, _ := m.DB.QueryContext(ctx, genreQuery, movie.ID)
+		genreRows, _ := m.DB.QueryContext(ctx, genreQuery, school.ID)
 
 		genres := make(map[int]string)
 		for genreRows.Next() {
-			var mg MovieGenre
+			var mg SchoolGenre
 			err := genreRows.Scan(
 				&mg.ID,
-				&mg.MovieID,
+				&mg.SchoolID,
 				&mg.GenreID,
 				&mg.Genre.GenreName,
 			)
@@ -128,11 +122,11 @@ func (m *DBModel) All(genre ...int) ([]*Movie, error) {
 			genres[mg.ID] = mg.Genre.GenreName
 		}
 		genreRows.Close()
-		movie.MovieGenre = genres
-		movies = append(movies, &movie)
+		school.SchoolGenre = genres
+		schools = append(schools, &school)
 
 	}
-	return movies, nil
+	return schools, nil
 }
 
 func (m *DBModel) GenreAll() ([]*Genre, error) {
@@ -163,21 +157,19 @@ func (m *DBModel) GenreAll() ([]*Genre, error) {
 	return genres, nil
 }
 
-func (m *DBModel) InsertMovie(movie Movie) error {
+func (m *DBModel) InsertSchool(school School) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	stmt := `insert into movies (title, description, year, release_date, runtime, rating, mpaa_rating, 
+	stmt := `insert into schools (name, recruit_type, salary, description,
 		created_at, updated_at) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
 	_, err := m.DB.ExecContext(ctx, stmt,
-		movie.Title,
-		movie.Description,
-		movie.Year,
-		movie.ReleaseDate,
-		movie.Runtime,
-		movie.Rating,
-		movie.MPAARating,
-		movie.CreatedAt,
-		movie.UpdatedAt,
+		school.ID,
+		school.Name,
+		school.Recruit_type,
+		school.Salary,
+		school.Description,
+		school.CreatedAt,
+		school.UpdatedAt,
 	)
 	if err != nil {
 		log.Println(err)
@@ -186,21 +178,19 @@ func (m *DBModel) InsertMovie(movie Movie) error {
 	return nil
 }
 
-func (m *DBModel) UpdateMovie(movie Movie) error {
+func (m *DBModel) UpdateSchool(school School) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	stmt := `update  movies set title = $1, description = $2, year = $3, release_date = $4, runtime = $5,
-				rating = $6, mpaa_rating = $7, updated_at = $8 where id = $9`
+	stmt := `update  schools set name = $1, recruit_type = $2, salary = $3, description = $4, 
+				updated_at = $5 where id = $6`
 	_, err := m.DB.ExecContext(ctx, stmt,
-		movie.Title,
-		movie.Description,
-		movie.Year,
-		movie.ReleaseDate,
-		movie.Runtime,
-		movie.Rating,
-		movie.MPAARating,
-		movie.UpdatedAt,
-		movie.ID,
+		school.Name,
+		school.Recruit_type,
+		school.Salary,
+		school.Description,
+		school.CreatedAt,
+		school.UpdatedAt,
+		school.ID,
 	)
 	if err != nil {
 		log.Println(err)
@@ -209,10 +199,10 @@ func (m *DBModel) UpdateMovie(movie Movie) error {
 	return nil
 }
 
-func (m *DBModel) DeleteMovie(id int) error {
+func (m *DBModel) DeleteSchool(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	stmt := "delete from movies where id = $1"
+	stmt := "delete from schools where id = $1"
 	_, err := m.DB.ExecContext(ctx, stmt, id)
 
 	if err != nil {

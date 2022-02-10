@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/pascaldekloe/jwt"
@@ -14,8 +15,8 @@ import (
 
 var validUser = models.User{
 	ID:       10,
-	Email:    "me@here.com",
-	Password: "$2a$12$6OdGRJKzI3n5O0VxXDWzA.HZjfwgOzACvGXkcU.ad1NWBUNmhm.6e",
+	Email:    os.Getenv("EMAIL"),
+	Password: os.Getenv("PASSWORD"),
 }
 
 type Credentials struct {
