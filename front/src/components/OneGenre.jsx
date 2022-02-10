@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 export default class OneGenre extends Component {
   state = {
-    movies: {},
+    schools: {},
     isLoaded: false,
     error: null,
     genreName: '',
@@ -11,7 +11,8 @@ export default class OneGenre extends Component {
 
   componentDidMount() {
     fetch(
-      `${process.env.REACT_APP_API_URL}/v1/movies/` + this.props.match.params.id
+      `${process.env.REACT_APP_API_URL}/v1/schools/` +
+        this.props.match.params.id
     )
       .then((response) => {
         console.log('Status code is', response.status)
@@ -25,7 +26,7 @@ export default class OneGenre extends Component {
       .then((json) => {
         this.setState(
           {
-            movies: json.movies,
+            schools: json.schools,
             isLoaded: true,
             genreName: this.props.location.genreName,
           },
@@ -40,9 +41,9 @@ export default class OneGenre extends Component {
   }
 
   render() {
-    let { movies, isLoaded, error, genreName } = this.state
-    if (!movies) {
-      movies = []
+    let { schools, isLoaded, error, genreName } = this.state
+    if (!schools) {
+      schools = []
     }
 
     if (error) {
@@ -54,10 +55,10 @@ export default class OneGenre extends Component {
         <Fragment>
           <h2>Genre: {genreName}</h2>
           <div className="list-group">
-            {movies.map((m) => (
+            {schools.map((m) => (
               <Link
                 key={m.id}
-                to={`/movies/${m.id}`}
+                to={`/schools/${m.id}`}
                 className="list-group-item list-group-item-action"
               >
                 {m.title}

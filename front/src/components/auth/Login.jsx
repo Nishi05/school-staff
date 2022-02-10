@@ -24,7 +24,7 @@ export default class Login extends Component {
     let value = evt.target.value
     let name = evt.target.name
     this.setState((prevState) => ({
-      ...prevState.movie,
+      ...prevState.school,
       [name]: value,
     }))
   }

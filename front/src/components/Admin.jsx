@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { Link } from 'react-router-dom'
 export default class Admin extends Component {
   state = {
-    movies: [],
+    schools: [],
     isLoaded: false,
     error: null,
   }
@@ -14,7 +14,7 @@ export default class Admin extends Component {
       })
       return
     }
-    fetch(`${process.env.REACT_APP_API_URL}/v1/movies`)
+    fetch(`${process.env.REACT_APP_API_URL}/v1/schools`)
       .then((response) => {
         console.log('Status code is', response.status)
         if (response.status !== '200') {
@@ -27,7 +27,7 @@ export default class Admin extends Component {
       .then((json) => {
         this.setState(
           {
-            movies: json.movies,
+            schools: json.schools,
             isLoaded: true,
           },
           (error) => {
@@ -40,7 +40,7 @@ export default class Admin extends Component {
       })
   }
   render() {
-    const { movies, isLoaded, error } = this.state
+    const { schools, isLoaded, error } = this.state
     if (error) {
       return <div>Error: {error.message}</div>
     } else if (!isLoaded) {
@@ -50,11 +50,11 @@ export default class Admin extends Component {
         <Fragment>
           <h2>Manage Catalogue</h2>
           <div className="list-group">
-            {movies.map((m) => (
+            {schools.map((m) => (
               <Link
                 key={m.id}
                 className="list-group-item list-group-item-action"
-                to={`/admin/movie/${m.id}`}
+                to={`/admin/school/${m.id}`}
               >
                 {m.title}
               </Link>

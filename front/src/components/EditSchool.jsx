@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import './EditMovie.css'
+import './EditSchool.css'
 import Input from './form/Input'
 import TextArea from './form/TextArea'
 import Select from './form/Select'
@@ -7,9 +7,9 @@ import Alert from './ui/Alert'
 import { Link } from 'react-router-dom'
 import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
-export default class EditMovie extends Component {
+export default class EditSchool extends Component {
   state = {
-    movie: {},
+    school: {},
     mpaaOptions: [],
     isLoaded: false,
     error: null,
@@ -17,7 +17,7 @@ export default class EditMovie extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      movie: {
+      school: {
         id: 0,
         title: '',
         release_date: '',
@@ -50,7 +50,7 @@ export default class EditMovie extends Component {
     evt.preventDefault()
 
     let errors = []
-    if (this.state.movie.title === '') {
+    if (this.state.school.title === '') {
       errors.push('title')
     }
 
@@ -71,7 +71,10 @@ export default class EditMovie extends Component {
       body: JSON.stringify(payload),
       headers: myHeaders,
     }
-    fetch(`${process.env.REACT_APP_API_URL}/v1/admin/editmovie`, requestOptions)
+    fetch(
+      `${process.env.REACT_APP_API_URL}/v1/admin/editschool`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
@@ -90,8 +93,8 @@ export default class EditMovie extends Component {
     let value = evt.target.value
     let name = evt.target.name
     this.setState((prevState) => ({
-      movie: {
-        ...prevState.movie,
+      school: {
+        ...prevState.school,
         [name]: value,
       },
     }))
@@ -110,7 +113,7 @@ export default class EditMovie extends Component {
     }
     const id = this.props.match.params.id
     if (id > 0) {
-      fetch(`${process.env.REACT_APP_API_URL}/v1/movie/` + id)
+      fetch(`${process.env.REACT_APP_API_URL}/v1/school/` + id)
         .then((response) => {
           console.log('Status code is', response.status)
           if (response.status !== '200') {
@@ -121,18 +124,18 @@ export default class EditMovie extends Component {
           return response.json()
         })
         .then((json) => {
-          const releaseDate = new Date(json.movie.release_date)
+          const releaseDate = new Date(json.school.release_date)
 
           this.setState(
             {
-              movie: {
+              school: {
                 id: id,
-                title: json.movie.title,
+                title: json.school.title,
                 release_date: releaseDate.toISOString().split('T')[0],
-                runtime: json.movie.runtime,
-                mpaa_rating: json.movie.mpaa_rating,
-                rating: json.movie.rating,
-                description: json.movie.description,
+                runtime: json.school.runtime,
+                mpaa_rating: json.school.mpaa_rating,
+                rating: json.school.rating,
+                description: json.school.description,
               },
               isLoaded: true,
             },
@@ -151,7 +154,7 @@ export default class EditMovie extends Component {
 
   confirmDelete = (e) => {
     confirmAlert({
-      title: 'Delete Movie?',
+      title: 'Delete School?',
       message: 'Are you sure?',
       buttons: [
         {
@@ -161,8 +164,8 @@ export default class EditMovie extends Component {
             myHeaders.append('Content-Type', 'application/json')
             myHeaders.append('Authorization', 'Bearer ' + this.props.jwt)
             fetch(
-              `${process.env.REACT_APP_API_URL}/v1/admin/deletemovie/` +
-                this.state.movie.id,
+              `${process.env.REACT_APP_API_URL}/v1/admin/deleteschool/` +
+                this.state.school.id,
               { method: 'GET', headers: myHeaders }
             )
               .then((response) => response.json())
@@ -190,7 +193,7 @@ export default class EditMovie extends Component {
     })
   }
   render() {
-    let { movie, isLoaded, error } = this.state
+    let { school, isLoaded, error } = this.state
 
     if (error) {
       return <div>Error: {error.message}</div>
@@ -199,7 +202,7 @@ export default class EditMovie extends Component {
     } else {
       return (
         <Fragment>
-          <h2>Add/ Edit movie</h2>
+          <h2>Add/ Edit school</h2>
           <Alert
             alertType={this.state.alert.type}
             alertMessage={this.state.alert.message}
@@ -210,7 +213,7 @@ export default class EditMovie extends Component {
               type="hidden"
               name="id"
               id="id"
-              value={movie.id}
+              value={school.id}
               onChange={this.handleChange}
             />
             <Input
@@ -218,7 +221,7 @@ export default class EditMovie extends Component {
               className={this.hasError('title') ? 'is-invalid' : ''}
               type={'text'}
               name={'title'}
-              value={movie.title}
+              value={school.title}
               handleChange={this.handleChange}
               errorDiv={this.hasError('title') ? 'text-danger' : 'd-none'}
               errorMsg={'Please enter a title'}
@@ -227,21 +230,21 @@ export default class EditMovie extends Component {
               title={'Release Date'}
               type={'date'}
               name={'release_date'}
-              value={movie.release_date}
+              value={school.release_date}
               handleChange={this.handleChange}
             />
             <Input
               title={'Runtime'}
               type={'text'}
               name={'runtime'}
-              value={movie.runtime}
+              value={school.runtime}
               handleChange={this.handleChange}
             />
             <Select
               title={'MPAA_rating'}
               name={'mpaa_rating'}
               options={this.state.mpaaOptions}
-              value={movie.mpaa_rating}
+              value={school.mpaa_rating}
               handleChange={this.handleChange}
               placeholder={'Choose...'}
             />
@@ -250,13 +253,13 @@ export default class EditMovie extends Component {
               title={'Rating'}
               type={'text'}
               name={'rating'}
-              value={movie.rating}
+              value={school.rating}
               handleChange={this.handleChange}
             />
             <TextArea
               title={'Description'}
               name={'description'}
-              value={movie.description}
+              value={school.description}
               handleChange={this.handleChange}
             />
 
@@ -265,7 +268,7 @@ export default class EditMovie extends Component {
             <Link to="/admin" className="btn btn-warning ms-1">
               Cancel
             </Link>
-            {movie.id > 0 && (
+            {school.id > 0 && (
               <a
                 href="#!"
                 onClick={() => this.confirmDelete()}

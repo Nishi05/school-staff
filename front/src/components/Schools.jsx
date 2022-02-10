@@ -1,16 +1,16 @@
 import React, { Component, Fragment } from 'react'
 import { Link } from 'react-router-dom'
 
-export default class Movies extends Component {
+export default class Schools extends Component {
   state = {
-    movies: [],
+    schools: [],
     isLoaded: false,
     error: null,
   }
 
   componentDidMount() {
     console.log(process.env.REACT_APP_API_URL)
-    fetch(`${process.env.REACT_APP_API_URL}/v1/movies`)
+    fetch(`${process.env.REACT_APP_API_URL}/v1/schools`)
       .then((response) => {
         console.log('Status code is', response.status)
         if (response.status !== '200') {
@@ -23,7 +23,7 @@ export default class Movies extends Component {
       .then((json) => {
         this.setState(
           {
-            movies: json.movies,
+            schools: json.schools,
             isLoaded: true,
           },
           (error) => {
@@ -36,7 +36,7 @@ export default class Movies extends Component {
       })
   }
   render() {
-    const { movies, isLoaded, error } = this.state
+    const { schools, isLoaded, error } = this.state
     if (error) {
       return <div>Error: {error.message}</div>
     } else if (!isLoaded) {
@@ -44,15 +44,15 @@ export default class Movies extends Component {
     } else {
       return (
         <Fragment>
-          <h2>Choose a movie</h2>
+          <h2>Choose a school</h2>
           <div className="list-group">
-            {movies.map((m) => (
+            {schools.map((m) => (
               <Link
                 key={m.id}
                 className="list-group-item list-group-item-action"
-                to={`/movies/${m.id}`}
+                to={`/schools/${m.id}`}
               >
-                {m.title}
+                {m.name}
               </Link>
             ))}
           </div>

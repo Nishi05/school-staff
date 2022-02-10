@@ -1,15 +1,15 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
-import Movies from './components/Movies'
+import Schools from './components/Schools'
 import Home from './components/Home'
 import Admin from './components/Admin'
-import OneMovie from './components/OneMovie'
+import OneSchool from './components/OneSchool'
 import Genres from './components/Genres'
 import OneGenre from './components/OneGenre'
-import EditMovie from './components/EditMovie'
+import EditSchool from './components/EditSchool'
 import Login from './components/auth/Login'
 import GraphQL from './components/GraphQL'
-import OneMovieGraphQL from './components/OneMovieGraphQL'
+import OneSchoolGraphQL from './components/OneSchoolGraphQL'
 export default class App extends Component {
   constructor(props) {
     super(props)
@@ -36,24 +36,24 @@ export default class App extends Component {
     }
   }
   render() {
-    let loginLink
-    if (this.state.jwt === '') {
-      loginLink = <Link to="/login">Login</Link>
-    } else {
-      loginLink = (
-        <Link to="/logout" onClick={this.logout}>
-          Logout
-        </Link>
-      )
-    }
+    // let loginLink
+    // if (this.state.jwt === '') {
+    //   loginLink = <Link to="/login">Login</Link>
+    // } else {
+    //   loginLink = (
+    //     <Link to="/logout" onClick={this.logout}>
+    //       Logout
+    //     </Link>
+    //   )
+    // }
     return (
       <Router>
         <div className="container">
           <div className="row">
             <div className="col mt-3">
-              <h1 className="mt-3">スクスタ</h1>
+              <h1 className="mt-3">スクスタ(開発中)</h1>
             </div>
-            <div className="col mt-3 text-end">{loginLink}</div>
+            {/* <div className="col mt-3 text-end">{loginLink}</div> */}
             <hr className="mb-3"></hr>
           </div>
           <div className="row">
@@ -61,10 +61,10 @@ export default class App extends Component {
               <nav>
                 <ul className="list-group">
                   <li className="list-group-item">
-                    <Link to="/">Home</Link>
+                    <Link to="/">スクスタとは</Link>
                   </li>
-                  <li className="list-group-item">
-                    <Link to="/movies">Movies</Link>
+                  {/* <li className="list-group-item">
+                    <Link to="/schools">Schools</Link>
                   </li>
                   <li className="list-group-item">
                     <Link to="/genres">Genres</Link>
@@ -72,25 +72,28 @@ export default class App extends Component {
                   {this.state.jwt !== '' && (
                     <Fragment>
                       <li className="list-group-item">
-                        <Link to="/admin/movie/0">Add Movie</Link>
+                        <Link to="/admin/school/0">Add School</Link>
                       </li>
                       <li className="list-group-item">
                         <Link to="/admin">Manage Catalogue</Link>
                       </li>
                     </Fragment>
-                  )}
+                  )} */}
                   <li className="list-group-item">
-                    <Link to="/graphql">GraphQL</Link>
+                    <Link to="/graphql">学校一覧</Link>
                   </li>
                 </ul>
               </nav>
             </div>
             <div className="col-md-10">
               <Switch>
-                <Route path="/movies/:id" component={OneMovie} />
-                <Route path="/moviesgraphql/:id" component={OneMovieGraphQL} />
-                <Route path="/movies">
-                  <Movies />
+                <Route path="/schools/:id" component={OneSchool} />
+                <Route
+                  path="/schoolsgraphql/:id"
+                  component={OneSchoolGraphQL}
+                />
+                <Route path="/schools">
+                  <Schools />
                 </Route>
 
                 <Route
@@ -110,9 +113,9 @@ export default class App extends Component {
                   <GraphQL />
                 </Route>
                 <Route
-                  path="/admin/movie/:id"
+                  path="/admin/school/:id"
                   component={(props) => (
-                    <EditMovie {...props} jwt={this.state.jwt} />
+                    <EditSchool {...props} jwt={this.state.jwt} />
                   )}
                 />
                 <Route

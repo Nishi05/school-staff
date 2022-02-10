@@ -6,7 +6,7 @@ export default class GraphQL extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      movies: [],
+      schools: [],
       isLoaded: false,
       error: null,
       alert: {
@@ -33,12 +33,12 @@ export default class GraphQL extends Component {
   performSearch() {
     const payload = `
     {
-        search(titleContains: "${this.state.searchTerm}") {
-            id
-            title
-            runtime
-            year
-            description
+        search(nameContains: "${this.state.searchTerm}") {
+          id
+          name
+          recruit_type
+          salary
+          description
         }
     }
     `
@@ -62,11 +62,11 @@ export default class GraphQL extends Component {
         console.log(theList)
         if (theList.length > 0) {
           this.setState({
-            movies: theList,
+            schools: theList,
           })
         } else {
           this.setState({
-            movies: [],
+            schools: [],
           })
         }
       })
@@ -76,11 +76,11 @@ export default class GraphQL extends Component {
     const payload = `
       {
           list {
-              id
-              title
-              runtime
-              year
-              description
+            id
+            name
+            recruit_type
+            salary
+            description
           }
       }
       `
@@ -103,35 +103,31 @@ export default class GraphQL extends Component {
       .then((theList) => {
         console.log(theList)
         this.setState({
-          movies: theList,
+          schools: theList,
         })
       })
   }
   render() {
-    let { movies } = this.state
+    let { schools } = this.state
     return (
       <Fragment>
-        <h2>GraphQL</h2>
+        <h2>募集学校一覧</h2>
         <hr />
         <Input
-          title={'Search'}
+          title={'学校名検索'}
           type={'text'}
           name={'search'}
           value={this.state.searchTerm}
           handleChange={this.handleChange}
         />
         <div className="list-group">
-          {movies.map((m) => (
+          {schools.map((m) => (
             <Link
               key={m.id}
-              to={`/moviesgraphql/${m.id}`}
+              to={`/schoolsgraphql/${m.id}`}
               className="list-group-item list-group-item-action"
             >
-              <strong>{m.title}</strong>
-              <br />
-              <small className="text-muted">
-                ({m.year}) - {m.runtime} minutes
-              </small>
+              <strong>学校名:{m.name}</strong>
               <br />
               {m.description.slice(0, 100)}...
             </Link>

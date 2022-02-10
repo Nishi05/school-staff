@@ -1,20 +1,17 @@
 import React, { Component, Fragment } from 'react'
 
-export default class OneMovieGraphQL extends Component {
-  state = { movie: {}, isLoaded: false, error: null }
+export default class OneSchoolGraphQL extends Component {
+  state = { school: {}, isLoaded: false, error: null }
 
   componentDidMount() {
     const payload = `
     {
-        movie(id: ${this.props.match.params.id}) {
+        school(id: ${this.props.match.params.id}) {
             id
-            title
-            runtime
-            year
+            name
+            recruit_type
+            salary
             description
-            release_date
-            rating
-            mpaa_rating
         }
     }
     `
@@ -31,17 +28,17 @@ export default class OneMovieGraphQL extends Component {
       .then((response) => response.json())
       .then((data) => {
         this.setState({
-          movie: data.data.movie,
+          school: data.data.school,
           isLoaded: true,
         })
       })
   }
   render() {
-    const { movie, isLoaded, error } = this.state
-    if (movie.genres) {
-      movie.genres = Object.values(movie.genres)
+    const { school, isLoaded, error } = this.state
+    if (school.genres) {
+      school.genres = Object.values(school.genres)
     } else {
-      movie.genres = []
+      school.genres = []
     }
     if (error) {
       return <div>Error: {error.message}</div>
@@ -50,15 +47,13 @@ export default class OneMovieGraphQL extends Component {
     } else {
       return (
         <Fragment>
-          <h2>
-            Movie: {movie.title} ({movie.year})
-          </h2>
+          <h2>学校名: {school.name}</h2>
 
           <div className="float-start">
-            <small>{movie.mpaa_rating}</small>
+            <small>{school.mpaa_rating}</small>
           </div>
           <div className="float-end">
-            {movie.genres.map((m, index) => (
+            {school.genres.map((m, index) => (
               <span className="badge bg-secondary me-1" key={index}>
                 {m}
               </span>
@@ -71,23 +66,21 @@ export default class OneMovieGraphQL extends Component {
             <tbody>
               <tr>
                 <td>
-                  <strong>Title:</strong>
+                  <strong>募集形態:</strong>
                 </td>
-                <td>
-                  {movie.title} {movie.id}
-                </td>
+                <td>{school.recruit_type}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Description:</strong>
+                  <strong>給与:</strong>
                 </td>
-                <td>{movie.description}</td>
+                <td>{school.salary}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Run time:</strong>
+                  <strong>説明:</strong>
                 </td>
-                <td>{movie.runtime} minutes</td>
+                <td>{school.description}</td>
               </tr>
             </tbody>
           </table>

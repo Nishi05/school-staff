@@ -1,11 +1,11 @@
 import React, { Component, Fragment } from 'react'
 
-export default class OneMovie extends Component {
-  state = { movie: {}, isLoaded: false, error: null }
+export default class OneSchool extends Component {
+  state = { school: {}, isLoaded: false, error: null }
 
   componentDidMount() {
     fetch(
-      `${process.env.REACT_APP_API_URL}/v1/movie/` + this.props.match.params.id
+      `${process.env.REACT_APP_API_URL}/v1/school/` + this.props.match.params.id
     )
       .then((response) => {
         console.log('Status code is', response.status)
@@ -19,7 +19,7 @@ export default class OneMovie extends Component {
       .then((json) => {
         this.setState(
           {
-            movie: json.movie,
+            school: json.school,
             isLoaded: true,
           },
           (error) => {
@@ -32,11 +32,11 @@ export default class OneMovie extends Component {
       })
   }
   render() {
-    const { movie, isLoaded, error } = this.state
-    if (movie.genres) {
-      movie.genres = Object.values(movie.genres)
+    const { school, isLoaded, error } = this.state
+    if (school.genres) {
+      school.genres = Object.values(school.genres)
     } else {
-      movie.genres = []
+      school.genres = []
     }
     if (error) {
       return <div>Error: {error.message}</div>
@@ -45,15 +45,10 @@ export default class OneMovie extends Component {
     } else {
       return (
         <Fragment>
-          <h2>
-            Movie: {movie.title} ({movie.year})
-          </h2>
+          <h2>School: {school.name}</h2>
 
-          <div className="float-start">
-            <small>{movie.mpaa_rating}</small>
-          </div>
           <div className="float-end">
-            {movie.genres.map((m, index) => (
+            {school.genres.map((m, index) => (
               <span className="badge bg-secondary me-1" key={index}>
                 {m}
               </span>
@@ -66,23 +61,17 @@ export default class OneMovie extends Component {
             <tbody>
               <tr>
                 <td>
-                  <strong>Title:</strong>
+                  <strong>学校名:</strong>
                 </td>
                 <td>
-                  {movie.title} {movie.id}
+                  {school.name} {school.id}
                 </td>
               </tr>
               <tr>
                 <td>
-                  <strong>Description:</strong>
+                  <strong>説明:</strong>
                 </td>
-                <td>{movie.description}</td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Run time:</strong>
-                </td>
-                <td>{movie.runtime} minutes</td>
+                <td>{school.description}</td>
               </tr>
             </tbody>
           </table>
