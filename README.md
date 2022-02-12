@@ -1,6 +1,6 @@
 # スクスタ開発（練習）
 リンク(HerokuのFreeプランの都合上Idle状態になっている事がありので、初回レスポンスが20秒ぐらいかかります)  
-https://app-school-staff-frontend.herokuapp.com/  
+[スクスタ](https://app-school-staff-frontend.herokuapp.com/)
 
 ## 目次
 #### [1.モチベーション](#1モチベーション-1)
@@ -23,7 +23,7 @@ CI/CD: Github Actions
 
 
 ## 3.工夫した点
-今回、ReactとGolangは初めて触るということにより基本的な流れはこちらを参考にした。  
+今回、ReactとGolangは初めて触るということにより基本的な流れは[こちら](https://www.udemy.com/course/working-with-react-and-go-golang/)を参考にした。  
 しかし、デプロイ作業が参考にした教材だと少し古典的だったので、HerokuとGithub ActionsでGithubと連携した自動デプロイを構築した。  
 以下が流れである  
 1.mainブランチにPush  
