@@ -1,5 +1,5 @@
 # スクスタ開発（練習）
-リンク(HerokuのFreeプランの都合上Idle状態になっている事がありので、初回レスポンスが20秒ぐらいかかります)  
+リンク(HerokuのFreeプランの都合上一定期間アクセスがないとIdle状態になるので、初回レスポンスが20秒ぐらいかかる可能性があります。)  
 [スクスタ](https://app-school-staff-frontend.herokuapp.com/)
 
 ## 目次
